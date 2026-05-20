@@ -1,7 +1,24 @@
 # 🧠 Vitácora de Proyecto — ElectroTech
 
 > **Propósito:** Archivo de contexto entre sesiones. Leer SIEMPRE al iniciar una nueva sesión de trabajo.  
-> **Última actualización:** 20 de mayo de 2026 — Sesión #1 completada
+> **Última actualización:** 20 de mayo de 2026 — 23:00 UTC-4 — **Sesión #1 CERRADA**
+
+---
+
+## 🟢 AL INICIAR UNA NUEVA SESIÓN — CHECKLIST
+
+Cuando se abra una nueva sesión de trabajo, el agente DEBE:
+
+1. **Leer este archivo completo** (`vitacora.md`).
+2. **Leer `fases.md`** para conocer el estado de cada tarea.
+3. **Activar el entorno virtual:**
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   ```
+4. **Activar SDD** (`sdd-init-lowcost` ya fue ejecutado; verificar con `mem_search`).
+5. **Buscar en Engram** el estado anterior: `mem_search(query: "sdd/electrotech/state")`.
+6. **Ubicarse en la Fase 3 — CRUD de Componentes e Inventario** (primera tarea pendiente).
+7. **NO construir nada sin preguntar primero** (modo interactivo activo desde Fase 3).
 
 ---
 
@@ -135,10 +152,16 @@ electrotech/
 
 ## 📝 Historial de Sesiones
 
-### Sesión #1 — 20 de mayo de 2026 (22:18 - actual)
+### Sesión #1 — 20 de mayo de 2026 (22:18 - 23:00) ✅ CERRADA
 - Proyecto iniciado desde cero. Repo vacío.
 - Rama renombrada `master` → `main`.
-- SDD inicializado con engram.
-- Creados: vitacora.md, fases.md, venv, estructura Django.
-- Fase 0, 1 y 2 completadas (modelos, auth, templates base).
-- Commit inicial realizado.
+- SDD inicializado con engram (topic: `sdd-init-lowcost/electrotech`).
+- Creados: vitacora.md, fases.md, .venv, estructura Django completa.
+- **Fase 0 completada:** Proyecto Django, dependencias, estructura, static, templates base.
+- **Fase 1 completada:** Auth con roles, login/logout, formularios, decoradores, 4 templates.
+- **Fase 2 completada:** Modelos Categoria, Componente, Movimiento, DetalleMovimiento, migraciones, 13 seeds.
+- **Dashboard base listo:** 6 tarjetas de acceso, alerta stock bajo, header responsive.
+- Commit inicial: `9810ea3` — 58 archivos, 2,653 líneas.
+- **Modo de trabajo:** Automático para Fases 0-2. A partir de Fase 3 → **INTERACTIVO** (revisar entre pasos).
+- **Artifact store:** Engram activo. SDD inicializado.
+- **Próxima acción:** Iniciar Fase 3 — CRUD de Componentes e Inventario.
