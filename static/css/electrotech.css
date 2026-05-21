@@ -1,9 +1,11 @@
 /* ============================================================
-   ELECTROTECH — Estilos personalizados
+   ELECTROTECH — Sistema de diseño global (Dark Tech Theme)
    Plataforma de gestión de inventario de hardware
    ============================================================ */
 
-/* --- Animaciones --- */
+/* ============================================================
+   1. ANIMACIONES
+   ============================================================ */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-8px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -20,30 +22,150 @@
     animation: pulse-glow 2s infinite;
 }
 
-/* --- Scrollbar personalizada --- */
+@keyframes tech-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(2deg); }
+}
+@keyframes tech-drift {
+    0%, 100% { opacity: 0; transform: translate(0, 0); }
+    20% { opacity: 0.5; }
+    50% { opacity: 0.15; transform: translate(20px, -28px); }
+    80% { opacity: 0.4; }
+}
+
+/* ============================================================
+   2. SCROLLBAR (dark)
+   ============================================================ */
 ::-webkit-scrollbar {
     width: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #0f172a;
 }
 ::-webkit-scrollbar-thumb {
-    background: #a3a8b7;
+    background: #334155;
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #1a66cc;
 }
 
-/* --- Tarjetas del dashboard --- */
+/* ============================================================
+   3. BODY — Tema oscuro global (sesiones autenticadas)
+   ============================================================ */
+.theme-dark body,
+body.theme-dark {
+    background: #080d14 !important;
+    color: #e2e8f0 !important;
+}
+
+/* ============================================================
+   4. FONDO TECH (capa decorativa)
+   ============================================================ */
+.tech-bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+.tech-bg-layer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 65% 25%, #1a3a5c 0%, #0f172a 45%, #080d14 80%);
+}
+.tech-bg-traces {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.06;
+}
+.tech-bg-chip {
+    position: absolute;
+    top: 80px;
+    right: 40px;
+    width: 110px;
+    height: 110px;
+    opacity: 0.16;
+    animation: tech-float 8s ease-in-out infinite;
+    filter: drop-shadow(0 0 25px rgba(59,130,246,0.2));
+}
+.tech-bg-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: #60a5fa;
+    border-radius: 50%;
+    opacity: 0;
+    animation: tech-drift 6s ease-in-out infinite;
+}
+
+/* ============================================================
+   5. CONTENEDOR DE CONTENIDO (sobre el fondo)
+   ============================================================ */
+.content-layer {
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================================
+   6. TARJETAS — Glassmorphism
+   ============================================================ */
+
+/* Tarjeta glass estándar */
+.glass-card {
+    background: rgba(15, 23, 42, 0.7) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.12) !important;
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+}
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.85) !important;
+    border-color: rgba(59, 130, 246, 0.3) !important;
+    box-shadow: 0 8px 30px rgba(26, 102, 204, 0.2);
+    transform: translateY(-4px);
+}
+.glass-card .glass-card-title {
+    color: #f1f5f9;
+}
+.glass-card .glass-card-text {
+    color: #94a3b8;
+}
+
+/* Tarjeta glass compacta (sin hover elevación) */
+.glass-card-flat {
+    background: rgba(15, 23, 42, 0.7) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.12) !important;
+    border-radius: 1rem;
+}
+
+/* Tarjeta de dashboard (compatible con versión anterior) */
 .dashboard-card {
+    background: rgba(15, 23, 42, 0.7) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.12) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid transparent;
+    color: #e2e8f0 !important;
 }
 .dashboard-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(26, 102, 204, 0.15);
-    border-color: rgba(26, 102, 204, 0.3);
+    box-shadow: 0 12px 30px rgba(26, 102, 204, 0.2);
+    border-color: rgba(26, 102, 204, 0.3) !important;
+    background: rgba(15, 23, 42, 0.85) !important;
+}
+.dashboard-card h3 {
+    color: #f1f5f9 !important;
+}
+.dashboard-card p {
+    color: #94a3b8 !important;
 }
 .dashboard-card .icon-wrapper {
     transition: transform 0.3s ease;
@@ -52,13 +174,19 @@
     transform: scale(1.1);
 }
 
-/* --- Tarjetas del inventario (catálogo) --- */
+/* Tarjeta de catálogo (Fase 3) */
 .inventory-card {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.12);
+    border-radius: 1rem;
     transition: all 0.3s ease;
+    overflow: hidden;
 }
 .inventory-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    border-color: rgba(59, 130, 246, 0.3);
 }
 .inventory-card img {
     transition: transform 0.4s ease;
@@ -67,12 +195,301 @@
     transform: scale(1.05);
 }
 
-/* --- Estilo para planillas de impresión --- */
+/* ============================================================
+   7. FORMULARIOS — Inputs, selects, textareas
+   ============================================================ */
+.dark-input,
+.dark-select,
+.dark-textarea {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    background: #1e293b;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 0.6rem;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+.dark-input::placeholder,
+.dark-textarea::placeholder {
+    color: #64748b;
+}
+.dark-input:focus,
+.dark-select:focus,
+.dark-textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+.dark-select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.2rem;
+}
+.dark-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+.dark-input-icon {
+    position: relative;
+}
+.dark-input-icon i {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 0.9rem;
+    z-index: 2;
+    pointer-events: none;
+}
+.dark-input-icon .dark-input {
+    padding-left: 2.5rem;
+}
+
+/* Checkbox y radio */
+.dark-checkbox {
+    accent-color: #3b82f6;
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Etiquetas */
+.dark-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.35rem;
+}
+
+/* Errores de formulario */
+.dark-error {
+    color: #f87171;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+/* ============================================================
+   8. BOTONES
+   ============================================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #1a66cc 0%, #3b82f6 100%);
+    color: #ffffff;
+}
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(26, 102, 204, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.btn-danger:hover {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+.btn-secondary {
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+.btn-secondary:hover {
+    background: rgba(148, 163, 184, 0.3);
+    color: #f1f5f9;
+}
+
+.btn-success {
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+.btn-success:hover {
+    background: #16a34a;
+    color: #ffffff;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: #94a3b8;
+}
+.btn-ghost:hover {
+    background: rgba(148, 163, 184, 0.1);
+    color: #e2e8f0;
+}
+
+.btn-sm {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
+}
+.btn-lg {
+    padding: 0.85rem 2rem;
+    font-size: 1rem;
+}
+
+/* ============================================================
+   9. TABLAS
+   ============================================================ */
+.dark-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #e2e8f0;
+    font-size: 0.875rem;
+}
+.dark-table thead {
+    background: rgba(15, 23, 42, 0.8);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+}
+.dark-table thead th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.dark-table tbody tr {
+    border-bottom: 1px solid rgba(59, 130, 246, 0.08);
+    transition: background 0.2s ease;
+}
+.dark-table tbody tr:hover {
+    background: rgba(59, 130, 246, 0.05);
+}
+.dark-table tbody td {
+    padding: 0.7rem 1rem;
+}
+
+/* ============================================================
+   10. BADGES / ETIQUETAS
+   ============================================================ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+.badge-blue   { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+.badge-green  { background: rgba(34, 197, 94, 0.2);  color: #86efac; }
+.badge-red    { background: rgba(239, 68, 68, 0.2);  color: #fca5a5; }
+.badge-amber  { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+.badge-gray   { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; }
+.badge-purple { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
+
+/* Badges de stock (compatibles con versión anterior) */
+.stock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.stock-normal  { background: rgba(34, 197, 94, 0.2);  color: #86efac; }
+.stock-low     { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+.stock-out     { background: rgba(239, 68, 68, 0.2);  color: #fca5a5; }
+
+/* ============================================================
+   11. ALERTAS Y NOTIFICACIONES
+   ============================================================ */
+.alert-glass {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 0.75rem;
+    padding: 0.85rem 1.25rem;
+}
+.alert-danger {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border: 1px solid rgba(239, 68, 68, 0.25) !important;
+}
+.alert-danger .alert-title { color: #fca5a5; }
+.alert-danger .alert-text  { color: #f87171; }
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.1) !important;
+    border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+.alert-warning .alert-title { color: #fcd34d; }
+.alert-warning .alert-text  { color: #fbbf24; }
+
+.alert-info {
+    background: rgba(59, 130, 246, 0.1) !important;
+    border: 1px solid rgba(59, 130, 246, 0.25) !important;
+}
+.alert-info .alert-title { color: #93c5fd; }
+.alert-info .alert-text  { color: #60a5fa; }
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.1) !important;
+    border: 1px solid rgba(34, 197, 94, 0.25) !important;
+}
+.alert-success .alert-title { color: #86efac; }
+.alert-success .alert-text  { color: #4ade80; }
+
+/* ============================================================
+   12. TIPOGRAFÍA
+   ============================================================ */
+.text-heading   { color: #f1f5f9; }
+.text-body      { color: #e2e8f0; }
+.text-muted     { color: #94a3b8; }
+.text-subtle    { color: #64748b; }
+.text-accent    { color: #3b82f6; }
+.text-danger    { color: #f87171; }
+.text-success   { color: #4ade80; }
+.text-warning   { color: #fbbf24; }
+
+/* ============================================================
+   13. ICON WRAPPERS (fondos de iconos de colores)
+   ============================================================ */
+.icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+}
+.icon-wrap-green  { background: rgba(34, 197, 94, 0.15); }
+.icon-wrap-red    { background: rgba(239, 68, 68, 0.15); }
+.icon-wrap-blue   { background: rgba(59, 130, 246, 0.15); }
+.icon-wrap-purple { background: rgba(168, 85, 247, 0.15); }
+.icon-wrap-amber  { background: rgba(245, 158, 11, 0.15); }
+.icon-wrap-gray   { background: rgba(148, 163, 184, 0.15); }
+
+/* ============================================================
+   14. ESTILO PARA PLANILLAS DE IMPRESIÓN
+   ============================================================ */
 @media print {
-    header, footer, .no-print {
+    header, footer, .no-print, .tech-bg-layer {
         display: none !important;
     }
-    body {
+    body, body.theme-dark {
         background: white !important;
         color: black !important;
     }
@@ -83,70 +500,58 @@
         box-shadow: none !important;
         border: 1px solid #ccc !important;
     }
+    .glass-card, .dashboard-card, .inventory-card {
+        background: white !important;
+        backdrop-filter: none !important;
+        border: 1px solid #ddd !important;
+        color: black !important;
+    }
 }
 .print-only {
     display: none;
 }
 
-/* --- Badges de stock --- */
-.stock-badge {
-    display: inline-flex;
+/* ============================================================
+   15. PLACEHOLDER DE IMAGEN
+   ============================================================ */
+.img-placeholder {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 2px 10px;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-.stock-normal  { background: #dcfce7; color: #166534; }
-.stock-low     { background: #fef3c7; color: #92400e; }
-.stock-out     { background: #fee2e2; color: #991b1b; }
-
-/* --- Formularios --- */
-.form-input-futuristic {
-    transition: all 0.2s ease;
-    border: 2px solid #e2e8f0;
-}
-.form-input-futuristic:focus {
-    border-color: #1a66cc;
-    box-shadow: 0 0 0 3px rgba(26, 102, 204, 0.15);
-    outline: none;
+    justify-content: center;
+    color: #64748b;
+    font-size: 3rem;
 }
 
-/* --- Botón primario con efecto glow --- */
-.btn-primary-glow {
-    background: linear-gradient(135deg, #1a66cc 0%, #3b82f6 100%);
-    border: none;
-    transition: all 0.3s ease;
-}
-.btn-primary-glow:hover {
-    box-shadow: 0 4px 15px rgba(26, 102, 204, 0.4);
-    transform: translateY(-1px);
-}
-
-/* --- Línea de firma en planillas --- */
+/* ============================================================
+   16. LÍNEA DE FIRMA (planillas)
+   ============================================================ */
 .firma-linea {
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #94a3b8;
     width: 250px;
     margin: 40px auto 8px;
 }
 
-/* --- Gradiente decorativo para fondos del dashboard --- */
-.bg-tech-gradient {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+/* ============================================================
+   17. RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+    .tech-bg-chip {
+        top: 70px;
+        right: 10px;
+        width: 70px;
+        height: 70px;
+        opacity: 0.1;
+    }
+    .dark-table {
+        font-size: 0.8rem;
+    }
+    .dark-table thead th,
+    .dark-table tbody td {
+        padding: 0.5rem 0.6rem;
+    }
 }
 
-/* --- Placeholder de imagen --- */
-.img-placeholder {
-    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #94a3b8;
-    font-size: 3rem;
-}
-
-/* --- Responsive fixes --- */
 @media (max-width: 640px) {
     .dashboard-card .icon-wrapper {
         font-size: 1.5rem;

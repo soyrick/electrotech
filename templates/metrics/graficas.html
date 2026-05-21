@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Métricas{% endblock %}
+
+{% block contenido %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Encabezado -->
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-heading flex items-center space-x-3">
+            <span class="w-10 h-10 bg-electro-primary rounded-lg flex items-center justify-center shadow-lg shadow-electro-primary/20">
+                <i class="fa-solid fa-chart-line text-white"></i>
+            </span>
+            <span>Métricas de Inventario</span>
+        </h1>
+        <p class="text-muted mt-2 ml-13">Gráficas de ingresos y egresos de componentes por mes.</p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="glass-card-flat p-5 mb-6">
+        <div class="flex flex-wrap items-end gap-4">
+            <div class="flex-1 min-w-[200px]">
+                <label class="dark-label">
+                    <i class="fa-solid fa-calendar mr-1 text-accent"></i> Mes
+                </label>
+                <select class="dark-select">
+                    <option value="">Todos los meses</option>
+                    <option value="1">Enero 2026</option>
+                    <option value="2">Febrero 2026</option>
+                    <option value="3">Marzo 2026</option>
+                    <option value="4">Abril 2026</option>
+                    <option value="5">Mayo 2026</option>
+                </select>
+            </div>
+            <div class="flex-1 min-w-[200px]">
+                <label class="dark-label">
+                    <i class="fa-solid fa-microchip mr-1 text-accent"></i> Componente
+                </label>
+                <select class="dark-select">
+                    <option value="">Todos los componentes</option>
+                </select>
+            </div>
+            <button class="btn btn-primary">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Filtrar</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Gráfica (placeholder) -->
+    <div class="glass-card-flat p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-heading flex items-center space-x-2">
+                <i class="fa-solid fa-chart-simple text-electro-primary-light"></i>
+                <span>Ingresos vs Egresos</span>
+            </h3>
+            <span class="badge badge-blue">
+                <i class="fa-solid fa-clock mr-1"></i> Próximamente
+            </span>
+        </div>
+        <div class="flex items-center justify-center rounded-xl p-10" style="background:rgba(30,41,59,0.5);border:2px dashed rgba(59,130,246,0.2);min-height:280px;">
+            <div class="text-center">
+                <i class="fa-solid fa-chart-line text-5xl mb-3 block text-accent" style="opacity:0.4;"></i>
+                <p class="font-medium text-heading">Gráfica de Ingresos y Egresos</p>
+                <p class="text-sm mt-1 text-subtle">Se implementará con Chart.js en la Fase 5</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen métrico -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+        <!-- Total ingresos -->
+        <div class="glass-card-flat p-5 flex items-center space-x-4">
+            <div class="icon-wrap icon-wrap-green w-12 h-12 rounded-xl flex-shrink-0">
+                <i class="fa-solid fa-arrow-down text-green-400 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wider text-subtle">Total Ingresos</p>
+                <p class="text-2xl font-bold text-success">0</p>
+            </div>
+        </div>
+
+        <!-- Total egresos -->
+        <div class="glass-card-flat p-5 flex items-center space-x-4">
+            <div class="icon-wrap icon-wrap-red w-12 h-12 rounded-xl flex-shrink-0">
+                <i class="fa-solid fa-arrow-up text-red-400 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wider text-subtle">Total Egresos</p>
+                <p class="text-2xl font-bold text-danger">0</p>
+            </div>
+        </div>
+
+        <!-- Día pico -->
+        <div class="glass-card-flat p-5 flex items-center space-x-4">
+            <div class="icon-wrap icon-wrap-amber w-12 h-12 rounded-xl flex-shrink-0">
+                <i class="fa-solid fa-bolt text-yellow-400 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wider text-subtle">Día Pico</p>
+                <p class="text-lg font-bold text-warning">—</p>
+            </div>
+        </div>
+
+        <!-- Componente más retirado -->
+        <div class="glass-card-flat p-5 flex items-center space-x-4">
+            <div class="icon-wrap icon-wrap-blue w-12 h-12 rounded-xl flex-shrink-0">
+                <i class="fa-solid fa-cube text-blue-400 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-xs uppercase tracking-wider text-subtle">Más Retirado</p>
+                <p class="text-sm font-bold truncate max-w-[120px] text-accent">—</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
