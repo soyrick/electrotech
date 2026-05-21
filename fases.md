@@ -5,7 +5,33 @@
 
 ---
 
-## Fase 0: Inicialización del Proyecto
+## 🤖 PROTOCOLO PARA AGENTES DE IA — LEER PRIMERO
+
+**Al iniciar una sesión con un nuevo usuario, el agente DEBE:**
+
+1. Leer este archivo completo y `vitacora.md`.
+2. Activar el entorno virtual (`.\.venv\Scripts\Activate.ps1`).
+3. **PREGUNTAR OBLIGATORIAMENTE:** `"¿Cómo te llamás? (Daniel o Alejandro)"` — o una variante si detecta un nombre distinto.
+4. Según la respuesta, dirigir al usuario a sus fases asignadas (ver tabla abajo).
+5. Si el nombre no coincide con Daniel ni Alejandro, preguntar si es **Ricardo** (coordinador) o un nuevo integrante.
+6. Usar **español neutral latinoamericano** en TODO: código, templates, comentarios, mensajes.
+7. Seguir el **sistema de diseño global** definido en `static/css/electrotech.css` (tema oscuro, glassmorphism, clases reutilizables).
+
+---
+
+## 👥 ASIGNACIÓN DE EQUIPO
+
+| Integrante | Rol | Fases asignadas | Rama |
+|------------|-----|-----------------|------|
+| **Ricardo** | Coordinador / Arquitecto | Fase 0, 1, 2, diseño global | `main` |
+| **Daniel** | Desarrollador Backend + Frontend | **Fase 3** (CRUD Inventario) + **Fase 4** (Ingreso/Egreso) | `develop` |
+| **Alejandro** | Desarrollador Frontend + Métricas | **Fase 5** (Dashboard/Métricas) + **Fase 6** (Pulido) | `develop` |
+
+> ⚠️ **IMPORTANTE:** Cada integrante trabaja en la rama `develop`. Daniel debe completar Fase 3 y 4 antes que Alejandro arranque Fase 5 (dependencia de datos).
+
+---
+
+## Fase 0: Inicialización del Proyecto — 👤 Ricardo
 **Objetivo:** Preparar el entorno de desarrollo y la estructura base del proyecto Django.
 
 - [x] 0.1 — Crear entorno virtual Python (.venv)
@@ -21,7 +47,7 @@
 
 ---
 
-## Fase 1: Autenticación y Roles
+## Fase 1: Autenticación y Roles — 👤 Ricardo
 **Objetivo:** Sistema de login, roles (super-admin, admin) y gestión de usuarios.
 
 - [x] 1.1 — Extender modelo User de Django con campo `rol`
@@ -37,7 +63,7 @@
 
 ---
 
-## Fase 2: Modelos de Datos
+## Fase 2: Modelos de Datos — 👤 Ricardo
 **Objetivo:** Definir todos los modelos Django para categorías, componentes, movimientos.
 
 - [x] 2.1 — Modelo `Categoria` (nombre, fecha_creacion)
@@ -50,8 +76,11 @@
 
 ---
 
-## Fase 3: CRUD de Componentes e Inventario
+## Fase 3: CRUD de Componentes e Inventario — 🧑‍💻 Daniel
 **Objetivo:** Catálogo visual de componentes con operaciones CRUD.
+**Rama:** `develop`
+
+> 📌 **Daniel**: Esta fase es tuya. Las vistas en `inventory/views.py` son placeholders — tenés que implementarlas con lógica real. Usá el sistema de diseño global (`electrotech.css`): tarjetas `.inventory-card`, formularios `.dark-input`, `.dark-select`, botones `.btn-primary`. El tema oscuro y fondo tech ya están configurados en `base.html`.
 
 - [ ] 3.1 — Vista: listado de inventario (catálogo tipo tarjetas)
 - [ ] 3.2 — Filtro por categoría (dropdown dinámico)
@@ -66,8 +95,11 @@
 
 ---
 
-## Fase 4: Ingreso y Egreso de Componentes
+## Fase 4: Ingreso y Egreso de Componentes — 🧑‍💻 Daniel
 **Objetivo:** Registro de entradas y salidas con generación de planillas PDF.
+**Rama:** `develop`
+
+> 📌 **Daniel**: Esta fase también es tuya. Depende de que la Fase 3 esté completa (necesitás componentes en la DB). Las vistas en `movements/views.py` son placeholders. Usá ReportLab para los PDF. El modelo `Movimiento` ya tiene `generar_numero_planilla()` y `DetalleMovimiento` tiene `guardar_snapshot()`.
 
 - [ ] 4.1 — Vista: formulario de ingreso de componentes
 - [ ] 4.2 — Lógica: crear o actualizar componente al ingresar
@@ -84,8 +116,11 @@
 
 ---
 
-## Fase 5: Dashboard, Métricas e Historial
+## Fase 5: Dashboard, Métricas e Historial — 🧑‍💻 Alejandro
 **Objetivo:** Panel principal con métricas, gráficas y registro histórico.
+**Rama:** `develop`
+
+> 📌 **Alejandro**: Esta fase es tuya. Depende de que Daniel complete Fase 3 y 4 (necesitás movimientos reales para métricas e historial). El dashboard y la vista de métricas ya tienen template con diseño glass. Implementá: API de datos JSON para Chart.js, vista de historial con tabla, y vista de planilla histórica. Usá las clases `.dark-table`, `.glass-card`, `.btn-*`.
 
 - [x] 5.1 — Template del dashboard principal con 6 opciones en tarjetas
 - [x] 5.2 — Tarjeta de alerta: componentes con stock bajo (≤ 3)
@@ -99,8 +134,11 @@
 
 ---
 
-## Fase 6: Diseño, Pulido y Pruebas
+## Fase 6: Diseño, Pulido y Pruebas — 🧑‍💻 Alejandro
 **Objetivo:** Afinar diseño responsive, validaciones y experiencia de usuario.
+**Rama:** `develop`
+
+> 📌 **Alejandro**: Esta fase también es tuya. Revisá responsive, agregá validaciones frontend/backend, creá el README.md, y ejecutá pruebas funcionales de todos los módulos.
 
 - [ ] 6.1 — Revisar diseño responsive (escritorio, tablet, móvil)
 - [x] 6.2 — Aplicar paleta de colores consistente (#1a66cc, #a3a8b7, #FFFFFF)
@@ -108,6 +146,7 @@
 - [ ] 6.4 — Validaciones de formularios (frontend + backend)
 - [x] 6.5 — Mensajes de éxito/error claros (Django messages)
 - [x] 6.6 — Logo genérico de ElectroTech preparado para reemplazo
-- [ ] 6.7 — Instrucciones finales en README.md para ejecutar el proyecto
-- [ ] 6.8 — Pruebas funcionales de todos los módulos
-- [ ] 6.9 — Commit final: "feat: plataforma ElectroTech completa"
+- [x] 6.7 — Sistema de diseño global (CSS: glassmorphism, dark theme, forms, tablas, badges, botones)
+- [ ] 6.8 — Instrucciones finales en README.md para ejecutar el proyecto
+- [ ] 6.9 — Pruebas funcionales de todos los módulos
+- [ ] 6.10 — Commit final: "feat: plataforma ElectroTech completa"
