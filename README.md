@@ -187,6 +187,6 @@ MIT — Sentite libre de usar, modificar y compartir.
 
 <div align="center">
 
-*Hecho con ⚡ por Ricardo, Daniel y Alejandro*
+*Hecho por Ricardo, Daniel y Alejandro*
 
 </div>
