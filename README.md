@@ -29,7 +29,7 @@
 
 ## 🎯 ¿Qué es ElectroTech?
 
-ElectroTech es una plataforma web responsive diseñada para la **gestión integral de inventario** de un almacén de piezas de computadora y componentes de hardware. Permite registrar entradas y salidas de componentes, generar planillas en PDF, visualizar métricas con gráficas interactivas y mantener un historial completo de movimientos.
+ElectroTech es una plataforma web responsive diseñada para la **gestión integral de inventario** de un almacén de piezas de computadora y componentes de hardware. Permite registrar entradas y salidas de componentes, generar planillas en PDF con diseño profesional, visualizar métricas con gráficas interactivas y mantener un historial completo de movimientos.
 
 ---
 
@@ -41,7 +41,8 @@ ElectroTech es una plataforma web responsive diseñada para la **gestión integr
 | 📦 **Inventario** | Catálogo visual tipo tarjetas con CRUD completo, filtros por categoría, imágenes |
 | 📥 **Ingresos** | Registro de entrada de componentes con generación automática de planillas PDF |
 | 📤 **Egresos** | Registro de salida con control de stock, selección múltiple y planillas PDF |
-| 📊 **Métricas** | Dashboard con gráficas Chart.js (ingresos vs egresos), resumen métrico mensual |
+| 📄 **Planillas PDF** | Comprobantes estilo factura con diseño profesional, encabezado claro, tipo de movimiento resaltado y firmas para impresión |
+| �📊 **Métricas** | Dashboard con gráficas Chart.js (ingresos vs egresos), resumen métrico mensual |
 | 📜 **Historial** | Registro completo de movimientos con snapshots históricos y re-generación de PDF |
 | 🎨 **Dark Theme** | Sistema de diseño global con glassmorphism, animaciones y fondo tech interactivo |
 
@@ -163,6 +164,13 @@ El proyecto cuenta con un **sistema de diseño unificado** en `static/css/electr
 
 ---
 
+## 🧾 Vista previa y fecha personalizada (nueva)
+
+- Ahora al crear un `Ingreso` o `Egreso` se mostrará un **resumen del comprobante** antes de descargar el PDF. Esto permite revisar los datos y descargar la planilla manualmente.
+- Se añadió una opción `Usar fecha y hora personalizada` en los formularios. Si se activa, puede seleccionar una **fecha** (selector de calendario) y una **hora** antes de confirmar. Si no está activa, se usa la fecha/hora actual detectada por el sistema.
+- La entrada de `cédula` ahora acepta sólo dígitos en el cliente y se valida en el servidor.
+
+
 ## 📐 Fases del Proyecto
 
 El desarrollo está dividido en 6 fases. Para ver el detalle completo y el protocolo para agentes de IA, consultá [`fases.md`](fases.md).
@@ -174,7 +182,7 @@ El desarrollo está dividido en 6 fases. Para ver el detalle completo y el proto
 | 2 | Modelos de datos | ✅ |
 | 3 | CRUD de componentes | 🔲 |
 | 4 | Ingreso y egreso + PDF | 🔲 |
-| 5 | Dashboard, métricas, historial | 🔄 |
+| 5 | Dashboard, métricas, historial | ✅ |
 | 6 | Diseño, pulido y pruebas | 🔄 |
 
 ---

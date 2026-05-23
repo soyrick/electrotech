@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}{% if form.instance.pk %}Editar componente{% else %}Crear componente{% endif %}{% endblock %}
+
+{% block contenido %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+  <div class="glass-card p-6">
+    <h2 class="glass-card-title text-xl mb-4">{% if form.instance.pk %}Editar componente{% else %}Nuevo componente{% endif %}</h2>
+
+    {% if form.non_field_errors %}
+      <div class="alert-glass alert-danger mb-4">
+        <div class="alert-text">{{ form.non_field_errors }}</div>
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="space-y-4">
+        <div>
+          <label class="dark-label">Nombre</label>
+          {{ form.nombre.errors }}
+          {{ form.nombre }}
+        </div>
+
+        <div>
+          <label class="dark-label">Categoría</label>
+          {{ form.categoria.errors }}
+          {{ form.categoria }}
+          <p class="text-sm text-subtle mt-1">
+            <a href="{% url 'inventory:categorias' %}" class="text-primary underline">Agregar o administrar categorías</a>
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="dark-label">Marca</label>
+            {{ form.marca.errors }}
+            {{ form.marca }}
+          </div>
+          <div>
+            <label class="dark-label">Modelo</label>
+            {{ form.modelo.errors }}
+            {{ form.modelo }}
+          </div>
+        </div>
+
+        <div>
+          <label class="dark-label">Serial</label>
+          {{ form.serial.errors }}
+          {{ form.serial }}
+        </div>
+
+        <div>
+          <label class="dark-label">Detalles</label>
+          {{ form.detalles.errors }}
+          {{ form.detalles }}
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="dark-label">Cantidad</label>
+            {{ form.cantidad.errors }}
+            {{ form.cantidad }}
+          </div>
+          <div>
+            <label class="dark-label">Ubicación</label>
+            {{ form.ubicacion.errors }}
+            {{ form.ubicacion }}
+          </div>
+        </div>
+
+        <div>
+          <label class="dark-label">Imagen</label>
+          {{ form.imagen.errors }}
+          {{ form.imagen }}
+          {% if form.instance.imagen %}
+            <p class="text-subtle mt-2">Imagen actual:</p>
+            <img src="{{ form.instance.imagen.url }}" alt="{{ form.instance.nombre }}" class="w-40 h-40 object-cover mt-2 rounded-md">
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center space-x-3">
+        <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
+        <a href="{% url 'inventory:listado' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

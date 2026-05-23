@@ -125,12 +125,12 @@
 - [x] 5.1 — Template del dashboard principal con 6 opciones en tarjetas
 - [x] 5.2 — Tarjeta de alerta: componentes con stock bajo (≤ 3)
 - [x] 5.3 — Header con navegación horizontal y botón de salir
-- [ ] 5.4 — Vista: métricas (selección de mes y componente)
-- [ ] 5.5 — Gráfica de líneas con Chart.js (ingresos azul, egresos rojo)
-- [ ] 5.6 — Resumen métrico (totales, días pico, componente más retirado)
-- [ ] 5.7 — Vista: historial de movimientos (tabla con filtros)
-- [ ] 5.8 — Botones ver planilla / imprimir / descargar PDF en historial
-- [ ] 5.9 — Vista de planilla histórica (re-generar PDF desde snapshot)
+- [x] 5.4 — Vista: métricas (selección de mes y componente)
+- [x] 5.5 — Gráfica de líneas con Chart.js (ingresos azul, egresos rojo)
+- [x] 5.6 — Resumen métrico (totales, días pico, componente más retirado)
+- [x] 5.7 — Vista: historial de movimientos (tabla con filtros)
+- [x] 5.8 — Botones ver planilla / imprimir / descargar PDF en historial
+- [x] 5.9 — Vista de planilla histórica (re-generar PDF desde snapshot)
 
 ---
 
@@ -147,6 +147,6 @@
 - [x] 6.5 — Mensajes de éxito/error claros (Django messages)
 - [x] 6.6 — Logo genérico de ElectroTech preparado para reemplazo
 - [x] 6.7 — Sistema de diseño global (CSS: glassmorphism, dark theme, forms, tablas, badges, botones)
-- [ ] 6.8 — Instrucciones finales en README.md para ejecutar el proyecto
+- [x] 6.8 — Instrucciones finales en README.md para ejecutar el proyecto
 - [ ] 6.9 — Pruebas funcionales de todos los módulos
 - [ ] 6.10 — Commit final: "feat: plataforma ElectroTech completa"

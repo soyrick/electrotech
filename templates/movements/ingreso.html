@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Ingreso de componentes{% endblock %}
+
+{% block contenido %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+  <div class="glass-card p-6">
+    <div class="icon-wrap-green mb-4">
+      <h2 class="text-2xl font-bold">Registrar Ingreso</h2>
+    </div>
+
+    {% if messages %}
+      <div class="space-y-2 mb-4">
+        {% for message in messages %}
+          <div class="alert-glass {% if message.tags %}{{ message.tags }}{% endif %}">
+            <div class="alert-text">{{ message }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <div class="space-y-4">
+        <div>
+          <label class="dark-label">Componente</label>
+          {{ form.componente.errors }}
+          {{ form.componente }}
+        </div>
+
+        <div>
+          <label class="dark-label">Cantidad</label>
+          {{ form.cantidad.errors }}
+          {{ form.cantidad }}
+        </div>
+
+        <div>
+          <label class="dark-label">Nombre de la persona</label>
+          {{ form.nombre_persona.errors }}
+          {{ form.nombre_persona }}
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="dark-label">Tipo de documento</label>
+            {{ form.cedula_prefijo.errors }}
+            {{ form.cedula_prefijo }}
+          </div>
+          <div class="sm:col-span-2">
+            <label class="dark-label">Número de cédula</label>
+            {{ form.cedula.errors }}
+            {{ form.cedula }}
+          </div>
+        </div>
+        <div class="mt-4 border-t pt-4">
+          <label class="inline-flex items-center">
+            {{ form.usar_fecha_hora }} <span class="ml-2">Usar fecha y hora personalizada</span>
+          </label>
+          <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="dark-label">Fecha</label>
+              {{ form.fecha_personalizada.errors }}
+              {{ form.fecha_personalizada }}
+            </div>
+            <div>
+              <label class="dark-label">Hora</label>
+              {{ form.hora_personalizada.errors }}
+              {{ form.hora_personalizada }}
+            </div>
+          </div>
+          <p class="text-subtle text-sm mt-2">Si no activa esta opción, se usará la fecha/hora actual.</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="dark-label">Cargo</label>
+            {{ form.cargo.errors }}
+            {{ form.cargo }}
+          </div>
+          <div>
+            <label class="dark-label">Departamento</label>
+            {{ form.departamento.errors }}
+            {{ form.departamento }}
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <button type="submit" class="btn btn-success">Registrar ingreso</button>
+        <a href="{% url 'inventory:listado' %}" class="btn btn-secondary">Volver</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Registro de usuario{% endblock %}
+
+{% block contenido %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+  <div class="glass-card p-6">
+    <h2 class="text-2xl font-bold mb-4">Crear cuenta</h2>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="space-y-4">
+        <div>
+          <label class="dark-label">Nombre de usuario</label>
+          {{ form.username.errors }}
+          {{ form.username }}
+        </div>
+
+        <div>
+          <label class="dark-label">Correo electrónico</label>
+          {{ form.email.errors }}
+          {{ form.email }}
+        </div>
+
+        <div>
+          <label class="dark-label">Contraseña</label>
+          {{ form.password1.errors }}
+          {{ form.password1 }}
+        </div>
+
+        <div>
+          <label class="dark-label">Confirmar contraseña</label>
+          {{ form.password2.errors }}
+          {{ form.password2 }}
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center space-x-3">
+        <button type="submit" class="btn btn-primary">Registrar</button>
+        <a href="{% url 'accounts:login' %}" class="btn btn-secondary">Iniciar sesión</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

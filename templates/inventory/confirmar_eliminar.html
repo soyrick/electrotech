@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Eliminar componente{% endblock %}
+
+{% block contenido %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+  <div class="glass-card p-6">
+    <h2 class="glass-card-title text-xl mb-4">Confirmar eliminación</h2>
+    <p class="text-body">¿Estás seguro que querés eliminar el componente <strong>{{ object.nombre }}</strong> (serial: {{ object.serial }})?</p>
+
+    <form method="post" class="mt-6">
+      {% csrf_token %}
+      <div class="flex items-center justify-center space-x-4">
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'inventory:listado' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

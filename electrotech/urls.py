@@ -7,11 +7,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from accounts.views import RegistrarUsuarioView
 
 urlpatterns = [
     # Panel de administración de Django (acceso opcional)
     path('admin/', admin.site.urls),
     
+    # Ruta pública de registro directa
+    path('register/', RegistrarUsuarioView.as_view(), name='register'),
+
     # Autenticación y gestión de usuarios (accounts)
     path('cuentas/', include('accounts.urls')),
     

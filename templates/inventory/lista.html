@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Inventario{% endblock %}
+
+{% block contenido %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+  <div class="glass-card p-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+      <h2 class="text-2xl font-bold text-heading">Inventario</h2>
+      {% if user.is_authenticated and user.rol == "super_admin" or user.is_authenticated and user.rol == "admin" %}
+        <div class="flex flex-wrap gap-3">
+          <a href="{% url 'inventory:categorias' %}" class="btn btn-secondary">Gestionar categorías</a>
+          <a href="{% url 'inventory:crear' %}" class="btn btn-primary">Crear componente</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for componente in componentes %}
+        <div class="inventory-card p-4">
+          <div class="flex items-start space-x-4">
+            <div class="w-24 h-24 bg-gray-800 rounded-md overflow-hidden flex-shrink-0">
+              {% if componente.imagen %}
+                <img src="{{ componente.imagen.url }}" alt="{{ componente.nombre }}" class="w-full h-full object-cover">
+              {% else %}
+                <div class="img-placeholder w-full h-full flex items-center justify-center">
+                  <i class="fa-solid fa-microchip"></i>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="flex-1">
+              <h3 class="text-heading text-lg font-semibold">{{ componente.nombre }}</h3>
+              <p class="text-subtle text-sm">{{ componente.marca }} — {{ componente.modelo }}</p>
+
+              <div class="mt-3 flex items-center justify-between">
+                <div>
+                  {% if componente.cantidad > 10 %}
+                    <span class="badge badge-green">{{ componente.cantidad }} uds.</span>
+                  {% elif componente.cantidad > 0 %}
+                    <span class="badge badge-amber">{{ componente.cantidad }} uds.</span>
+                  {% else %}
+                    <span class="badge badge-red">Agotado</span>
+                  {% endif %}
+                </div>
+
+                <div class="space-x-2">
+                  <a href="{% url 'inventory:detalle' componente.pk %}" class="btn btn-ghost btn-sm">Detalle</a>
+                  {% if user.is_authenticated and user.rol == "super_admin" or user.is_authenticated and user.rol == "admin" %}
+                    <a href="{% url 'inventory:editar' componente.pk %}" class="btn btn-secondary btn-sm">Editar</a>
+                    <a href="{% url 'inventory:eliminar' componente.pk %}" class="btn btn-danger btn-sm">Eliminar</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">No hay componentes registrados.</p>
+      {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <div class="mt-6 flex items-center justify-center space-x-2">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-ghost">« Anterior</a>
+      {% endif %}
+      <span class="text-subtle px-3">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-ghost">Siguiente »</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

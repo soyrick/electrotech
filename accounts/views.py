@@ -111,3 +111,73 @@ def permiso_denegado(request):
 
 # Importación al final para evitar referencia circular
 from .models import Usuario
+
+# ---- Registro de usuarios (público) ----
+from django import forms as django_forms
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
+
+
+class RegistroForm(django_forms.ModelForm):
+    """Formulario público de registro. Define password1/password2 y widgets con clases del sistema."""
+    password1 = django_forms.CharField(
+        label='Contraseña',
+        widget=django_forms.PasswordInput(attrs={'class': 'dark-input', 'placeholder': 'Mínimo 8 caracteres'})
+    )
+    password2 = django_forms.CharField(
+        label='Confirmar contraseña',
+        widget=django_forms.PasswordInput(attrs={'class': 'dark-input', 'placeholder': 'Repita la contraseña'})
+    )
+
+    class Meta:
+        model = Usuario
+        fields = ['username', 'email']
+        widgets = {
+            'username': django_forms.TextInput(attrs={'class': 'dark-input', 'placeholder': 'Nombre de usuario'}),
+            'email': django_forms.EmailInput(attrs={'class': 'dark-input', 'placeholder': 'correo@ejemplo.com'}),
+        }
+
+    def clean(self):
+        cleaned = super().clean()
+        p1 = cleaned.get('password1')
+        p2 = cleaned.get('password2')
+        if p1 and p2 and p1 != p2:
+            raise django_forms.ValidationError('Las contraseñas no coinciden.')
+        if p1 and len(p1) < 8:
+            raise django_forms.ValidationError('La contraseña debe tener al menos 8 caracteres.')
+        return cleaned
+
+    def save(self, commit=True):
+        usuario = super().save(commit=False)
+        usuario.set_password(self.cleaned_data['password1'])
+        # Asignar rol por defecto 'user' si existe la enumeración
+        try:
+            usuario.rol = Usuario.Rol.USER
+        except Exception:
+            usuario.rol = 'user'
+        if commit:
+            usuario.save()
+        return usuario
+
+
+class RegistrarUsuarioView(CreateView):
+    """Vista pública para registrar nuevos usuarios.
+
+    Redirige al login tras el registro y muestra un mensaje flash.
+    """
+    model = Usuario
+    form_class = RegistroForm
+    template_name = 'accounts/registro.html'
+    success_url = reverse_lazy('accounts:login')
+
+    def dispatch(self, request, *args, **kwargs):
+        # Si ya está autenticado, no permitir registro público
+        if request.user.is_authenticated:
+            messages.info(request, 'Ya has iniciado sesión.')
+            return redirect('metrics:dashboard')
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, 'Cuenta creada correctamente. Ahora puedes iniciar sesión.')
+        return response

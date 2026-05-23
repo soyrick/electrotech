@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Detalle: {{ componente.nombre }}{% endblock %}
+
+{% block contenido %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+  <div class="glass-card p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="col-span-1">
+        <div class="w-full h-64 bg-gray-800 rounded-md overflow-hidden">
+          {% if componente.imagen %}
+            <img src="{{ componente.imagen.url }}" alt="{{ componente.nombre }}" class="w-full h-full object-cover">
+          {% else %}
+            <div class="img-placeholder w-full h-full flex items-center justify-center"><i class="fa-solid fa-microchip"></i></div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="md:col-span-2">
+        <h2 class="text-2xl font-bold text-heading">{{ componente.nombre }}</h2>
+        <p class="text-subtle">{{ componente.marca }} — {{ componente.modelo }}</p>
+
+        <div class="mt-4 space-y-2">
+          <p><span class="text-subtle">Serial:</span> {{ componente.serial }}</p>
+          <p><span class="text-subtle">Categoría:</span> {{ componente.categoria.nombre }}</p>
+          <p><span class="text-subtle">Ubicación:</span> {{ componente.ubicacion }}</p>
+          <p><span class="text-subtle">Detalles:</span> {{ componente.detalles|linebreaksbr }}</p>
+          <p>
+            <span class="text-subtle">Cantidad:</span>
+            {% if componente.cantidad > 10 %}
+              <span class="badge badge-green">{{ componente.cantidad }} uds.</span>
+            {% elif componente.cantidad > 0 %}
+              <span class="badge badge-amber">{{ componente.cantidad }} uds.</span>
+            {% else %}
+              <span class="badge badge-red">Agotado</span>
+            {% endif %}
+          </p>
+          <p><span class="text-subtle">Fecha ingreso:</span> {{ componente.fecha_ingreso }}</p>
+          <p><span class="text-subtle">Última actualización:</span> {{ componente.fecha_actualizacion }}</p>
+        </div>
+
+        <div class="mt-6 space-x-3">
+          {% if user.is_authenticated and user.rol == "super_admin" or user.is_authenticated and user.rol == "admin" %}
+            <a href="{% url 'inventory:editar' componente.pk %}" class="btn btn-secondary">Editar</a>
+            <a href="{% url 'inventory:eliminar' componente.pk %}" class="btn btn-danger">Eliminar</a>
+          {% endif %}
+          <a href="{% url 'inventory:listado' %}" class="btn btn-ghost">Volver al listado</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

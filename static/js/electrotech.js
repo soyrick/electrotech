@@ -27,6 +27,34 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // ============================================================
+// Habilitar/deshabilitar fecha/hora personalizada y validaciones
+// ============================================================
+document.addEventListener('DOMContentLoaded', function () {
+    const usarCheckbox = document.getElementById('id_usar_fecha_hora');
+    const customFields = document.querySelectorAll('.custom-datetime');
+
+    function toggleCustomFields() {
+        const enabled = usarCheckbox && usarCheckbox.checked;
+        customFields.forEach(function (el) {
+            el.disabled = !enabled;
+        });
+    }
+
+    if (usarCheckbox) {
+        toggleCustomFields();
+        usarCheckbox.addEventListener('change', toggleCustomFields);
+    }
+
+    // Forzar que los campos de cédula sólo acepten números en cliente
+    document.querySelectorAll('input[name="cedula"]').forEach(function (input) {
+        input.addEventListener('input', function (e) {
+            const cleaned = this.value.replace(/[^0-9]/g, '');
+            if (this.value !== cleaned) this.value = cleaned;
+        });
+    });
+});
+
+// ============================================================
 // Cerrar mensajes automáticamente después de 5 segundos
 // ============================================================
 document.addEventListener('DOMContentLoaded', function () {

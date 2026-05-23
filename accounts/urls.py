@@ -12,6 +12,7 @@ urlpatterns = [
     # Autenticación
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('registro/', views.RegistrarUsuarioView.as_view(), name='registro'),
     
     # Gestión de administradores (solo super-admin)
     path('crear-admin/', views.crear_admin, name='crear_admin'),

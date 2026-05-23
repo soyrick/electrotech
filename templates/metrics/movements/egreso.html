@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Egreso de componentes{% endblock %}
+
+{% block contenido %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+  <div class="glass-card p-6">
+    <div class="flex items-center space-x-4 mb-6">
+      <div class="icon-wrap icon-wrap-blue p-3 rounded-lg"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+      <h1 class="text-xl font-bold text-heading">Egreso de Hardware</h1>
+    </div>
+
+    {% if messages %}
+      <div class="space-y-2 mb-4">
+        {% for message in messages %}
+          <div class="alert-glass {% if message.tags %}{{ message.tags }}{% endif %}">
+            <div class="alert-text">{{ message }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="space-y-4">
+        {% for field in form.visible_fields %}
+          <div>
+            <label class="dark-label">{{ field.label }}</label>
+            <div>
+              {{ field.errors }}
+              {{ field }}
+            </div>
+            {% if field.help_text %}
+              <p class="text-subtle text-sm mt-1">{{ field.help_text }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="mt-6 flex items-center space-x-3">
+        <button type="submit" class="btn btn-success">Registrar egreso</button>
+        <a href="{% url 'inventory:listado' %}" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
