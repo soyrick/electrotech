@@ -54,6 +54,13 @@ def generar_comprobante_pdf(movimiento):
         fontSize=10,
         textColor=NAVY,
     )
+    label_style = ParagraphStyle(
+        'LabelStyle',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=10,
+        textColor=NAVY,
+    )
     table_par_style = ParagraphStyle(
         'TablePara',
         parent=styles['Normal'],
@@ -68,47 +75,99 @@ def generar_comprobante_pdf(movimiento):
         textColor=colors.white,
     )
 
+    usable_width = A4[0] - (doc.leftMargin + doc.rightMargin)
+
     elements = []
 
     # Encabezado
-    elements.append(Paragraph("COMPROBANTE DE MOVIMIENTO DE INVENTARIO - ELECTROTECH", title_style))
-    # Línea horizontal sutil
-    elements.append(HRFlowable(width="100%", thickness=1, color=DIVIDER, spaceBefore=4, spaceAfter=8))
+    elements.append(Paragraph("COMPROBANTE DE MOVIMIENTO DE INVENTARIO", title_style))
+    elements.append(Paragraph("ElectroTech - Sistema de Inventario", ParagraphStyle('Subtitle', parent=styles['Normal'], fontName='Helvetica', fontSize=11, leading=14, textColor=NAVY, alignment=1, spaceAfter=4)))
+    elements.append(Paragraph("Documento oficial de control de ingresos y egresos", ParagraphStyle('SubtitleNote', parent=styles['Normal'], fontName='Helvetica', fontSize=9, leading=12, textColor=HexColor('#475569'), alignment=1, spaceAfter=10)))
+    elements.append(HRFlowable(width="100%", thickness=1, color=DIVIDER, spaceBefore=2, spaceAfter=14))
 
-    # Metadatos (Código, Fecha/Hora, Usuario, Tipo)
+    # Metadatos
     fecha = getattr(movimiento, 'fecha_hora', None)
     if not fecha:
         fecha = timezone.now()
-    fecha_str = timezone.localtime(fecha).strftime("%Y-%m-%d %H:%M:%S")
+    fecha_str = timezone.localtime(fecha).strftime("%d/%m/%Y %H:%M:%S")
 
     tipo_display = movimiento.get_tipo_display() if hasattr(movimiento, 'get_tipo_display') else getattr(movimiento, 'tipo', '')
-
     usuario_text = getattr(movimiento.usuario, 'email', None) or getattr(movimiento.usuario, 'username', str(movimiento.usuario))
+    persona_text = movimiento.nombre_persona or 'N/D'
+    cedula_text = movimiento.cedula or 'N/D'
+    departamento_text = movimiento.departamento or 'N/D'
+    cargo_text = movimiento.cargo or 'N/D'
 
-    meta_table_data = [
-        [Paragraph(f"<b>Código de Operación:</b> {movimiento.numero_planilla or ''}", meta_value_style),
-         Paragraph(f"<b>Usuario:</b> {usuario_text}", meta_value_style)],
-        [Paragraph(f"<b>Fecha/Hora:</b> {fecha_str}", meta_value_style),
-         Paragraph(f"<b>Tipo de Movimiento:</b> {tipo_display}", meta_value_style)],
-    ]
+    badge_style = ParagraphStyle(
+        'BadgeStyle',
+        parent=styles['Normal'],
+        fontName='Helvetica-Bold',
+        fontSize=11,
+        textColor=colors.white,
+        alignment=1,
+        leading=13,
+    )
+    badge = Paragraph(tipo_display, badge_style)
 
-    meta_table = Table(meta_table_data, colWidths=[None, None], hAlign='LEFT')
-    meta_table.setStyle(TableStyle([
+    left_meta = Table([
+        [Paragraph('<b>Código de Operación</b>', label_style), Paragraph(movimiento.numero_planilla or '', meta_value_style)],
+        [Paragraph('<b>Fecha / Hora</b>', label_style), Paragraph(fecha_str, meta_value_style)],
+        [Paragraph('<b>Usuario</b>', label_style), Paragraph(usuario_text, meta_value_style)],
+    ], colWidths=[usable_width * 0.20, usable_width * 0.30])
+    left_meta.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('LEFTPADDING', (0,0), (-1,-1), 0),
+        ('RIGHTPADDING', (0,0), (-1,-1), 8),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+    ]))
+
+    right_meta = Table([
+        [Paragraph('<b>Persona</b>', label_style), Paragraph(persona_text, meta_value_style)],
+        [Paragraph('<b>Cédula / ID</b>', label_style), Paragraph(cedula_text, meta_value_style)],
+        [Paragraph('<b>Departamento</b>', label_style), Paragraph(departamento_text, meta_value_style)],
+        [Paragraph('<b>Cargo</b>', label_style), Paragraph(cargo_text, meta_value_style)],
+    ], colWidths=[usable_width * 0.20, usable_width * 0.30])
+    right_meta.setStyle(TableStyle([
+        ('VALIGN', (0,0), (-1,-1), 'TOP'),
+        ('LEFTPADDING', (0,0), (-1,-1), 0),
+        ('RIGHTPADDING', (0,0), (-1,-1), 8),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+    ]))
+
+    badge_table = Table([[badge]], colWidths=[usable_width * 0.24], hAlign='RIGHT')
+    badge_table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,-1), HexColor('#16A34A') if movimiento.es_ingreso else HexColor('#DC2626')),
+        ('BOX', (0,0), (-1,-1), 1.2, HexColor('#0F172A') if movimiento.es_ingreso else HexColor('#991B1B')),
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+        ('TOPPADDING', (0,0), (-1,-1), 8),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 8),
+        ('LEFTPADDING', (0,0), (-1,-1), 10),
+        ('RIGHTPADDING', (0,0), (-1,-1), 10),
+    ]))
+
+    elements.append(badge_table)
+    elements.append(Spacer(1, 10))
+
+    meta_container = Table(
+        [[left_meta, right_meta]],
+        colWidths=[usable_width * 0.46, usable_width * 0.46]
+    )
+    meta_container.setStyle(TableStyle([
         ('VALIGN', (0,0), (-1,-1), 'TOP'),
         ('LEFTPADDING', (0,0), (-1,-1), 0),
         ('RIGHTPADDING', (0,0), (-1,-1), 0),
         ('TOPPADDING', (0,0), (-1,-1), 0),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 16),
     ]))
-    elements.append(meta_table)
-    elements.append(Spacer(1, 8))
+    elements.append(meta_container)
+    elements.append(Spacer(1, 12))
 
     # Detalle de hardware: Tabla con encabezado + filas (usa Paragraph para auto wrap)
     header = [
         Paragraph("Nombre", header_para_style),
         Paragraph("Categoría", header_para_style),
         Paragraph("Cantidad", header_para_style),
-        Paragraph("Tipo Movimiento", header_para_style),
     ]
 
     detalles_qs = list(getattr(movimiento, 'detalles').all()) if hasattr(movimiento, 'detalles') else []
@@ -122,35 +181,34 @@ def generar_comprobante_pdf(movimiento):
                 Paragraph(str(nombre), table_par_style),
                 Paragraph(str(categoria), table_par_style),
                 Paragraph(str(cantidad_val), table_par_style),
-                Paragraph(str(tipo_display), table_par_style),
             ])
     else:
-        # Fallback: incluir un renglón vacío si no hay detalles
         data_rows.append([
             Paragraph('-', table_par_style),
             Paragraph('-', table_par_style),
             Paragraph('-', table_par_style),
-            Paragraph(str(tipo_display), table_par_style),
         ])
 
     table_data = [header] + data_rows
 
     # Column widths: distribuir en el ancho usable
-    usable_width = A4[0] - (doc.leftMargin + doc.rightMargin)
-    col_widths = [usable_width * 0.45, usable_width * 0.25, usable_width * 0.15, usable_width * 0.15]
+    col_widths = [usable_width * 0.55, usable_width * 0.30, usable_width * 0.15]
 
-    tbl = Table(table_data, colWidths=col_widths, hAlign='LEFT')
+    tbl = Table(table_data, colWidths=col_widths, hAlign='LEFT', repeatRows=1)
 
     tbl_style = TableStyle([
         ('BACKGROUND', (0,0), (-1,0), NAVY),
         ('TEXTCOLOR', (0,0), (-1,0), colors.white),
-        ('ALIGN', (2,1), (3,-1), 'CENTER'),
+        ('ALIGN', (2,1), (2,-1), 'CENTER'),
         ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+        ('LINEABOVE', (0,0), (-1,0), 1, DIVIDER),
         ('LINEBELOW', (0,0), (-1,0), 1, DIVIDER),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 8),
-        ('TOPPADDING', (0,0), (-1,-1), 8),
-        ('LEFTPADDING', (0,0), (-1,-1), 6),
-        ('RIGHTPADDING', (0,0), (-1,-1), 6),
+        ('BOX', (0,0), (-1,-1), 0.8, DIVIDER),
+        ('GRID', (0,0), (-1,-1), 0.25, DIVIDER),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 10),
+        ('TOPPADDING', (0,0), (-1,-1), 10),
+        ('LEFTPADDING', (0,0), (-1,-1), 8),
+        ('RIGHTPADDING', (0,0), (-1,-1), 8),
     ])
 
     # Alternar fondo en las filas de datos
@@ -181,8 +239,25 @@ def generar_comprobante_pdf(movimiento):
     ]))
     elements.append(sig_table)
 
+    def draw_footer(canvas, doc):
+        footer_text = "ElectroTech - Comprobante de Movimiento"
+        page_text = f"Página {doc.page}"
+        canvas.saveState()
+        canvas.setFont('Helvetica', 8)
+        canvas.setFillColor(HexColor('#475569'))
+        canvas.drawString(doc.leftMargin, 15 * mm, footer_text)
+        canvas.drawRightString(A4[0] - doc.rightMargin, 15 * mm, page_text)
+        canvas.restoreState()
+
+    def draw_border(canvas, doc):
+        canvas.saveState()
+        canvas.setStrokeColor(DIVIDER)
+        canvas.setLineWidth(0.8)
+        canvas.rect(doc.leftMargin - 6, doc.bottomMargin - 6, A4[0] - doc.leftMargin - doc.rightMargin + 12, A4[1] - doc.topMargin - doc.bottomMargin + 12, stroke=1, fill=0)
+        canvas.restoreState()
+
     # Construir documento
-    doc.build(elements)
+    doc.build(elements, onFirstPage=lambda canvas, doc: (draw_border(canvas, doc), draw_footer(canvas, doc)), onLaterPages=lambda canvas, doc: (draw_border(canvas, doc), draw_footer(canvas, doc)))
 
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename=filename, content_type='application/pdf' )

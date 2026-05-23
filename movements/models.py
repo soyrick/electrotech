@@ -68,6 +68,17 @@ class Movimiento(models.Model):
         verbose_name='Departamento',
         help_text='Departamento al que pertenece (solo para egresos).'
     )
+    # Soft-delete fields
+    eliminado = models.BooleanField(default=False, verbose_name='Eliminado')
+    eliminado_en = models.DateTimeField(null=True, blank=True, verbose_name='Eliminado en')
+    eliminado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='movimientos_eliminados',
+        verbose_name='Eliminado por'
+    )
     
     def __str__(self):
         return f"{self.numero_planilla} - {self.get_tipo_display()} ({self.fecha_hora.strftime('%d/%m/%Y %H:%M')})"

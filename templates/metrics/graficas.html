@@ -19,52 +19,53 @@
 
     <!-- Filtros -->
     <div class="glass-card-flat p-5 mb-6">
-        <div class="flex flex-wrap items-end gap-4">
+        <form id="filtro-metricas" method="get" class="flex flex-wrap items-end gap-4">
             <div class="flex-1 min-w-[200px]">
                 <label class="dark-label">
                     <i class="fa-solid fa-calendar mr-1 text-accent"></i> Mes
                 </label>
-                <select class="dark-select">
+                <select name="month" id="month-select" class="dark-select">
                     <option value="">Todos los meses</option>
-                    <option value="1">Enero 2026</option>
-                    <option value="2">Febrero 2026</option>
-                    <option value="3">Marzo 2026</option>
-                    <option value="4">Abril 2026</option>
-                    <option value="5">Mayo 2026</option>
+                    {% for mes in meses %}
+                        <option value="{{ mes.valor }}" {% if mes.valor == selected_month %}selected{% endif %}>{{ mes.texto }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="flex-1 min-w-[200px]">
                 <label class="dark-label">
                     <i class="fa-solid fa-microchip mr-1 text-accent"></i> Componente
                 </label>
-                <select class="dark-select">
+                <select name="componente" id="componente-select" class="dark-select">
                     <option value="">Todos los componentes</option>
+                    {% for componente in componentes %}
+                        <option value="{{ componente.pk }}" {% if componente.pk == selected_componente_id %}selected{% endif %}>
+                            {{ componente.nombre }} — {{ componente.marca }} {{ componente.modelo }}
+                        </option>
+                    {% endfor %}
                 </select>
             </div>
-            <button class="btn btn-primary">
+            <button type="submit" class="btn btn-primary">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <span>Filtrar</span>
             </button>
-        </div>
+        </form>
     </div>
 
-    <!-- Gráfica (placeholder) -->
+    <!-- Gráfica -->
     <div class="glass-card-flat p-6 mb-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-heading flex items-center space-x-2">
-                <i class="fa-solid fa-chart-simple text-electro-primary-light"></i>
-                <span>Ingresos vs Egresos</span>
-            </h3>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+            <div class="flex items-center space-x-2">
+                <span class="text-electro-primary-light text-xl">
+                    <i class="fa-solid fa-chart-simple"></i>
+                </span>
+                <h3 class="text-lg font-semibold text-heading">Ingresos vs Egresos</h3>
+            </div>
             <span class="badge badge-blue">
-                <i class="fa-solid fa-clock mr-1"></i> Próximamente
+                <i class="fa-solid fa-clock mr-1"></i> Datos dinámicos
             </span>
         </div>
-        <div class="flex items-center justify-center rounded-xl p-10" style="background:rgba(30,41,59,0.5);border:2px dashed rgba(59,130,246,0.2);min-height:280px;">
-            <div class="text-center">
-                <i class="fa-solid fa-chart-line text-5xl mb-3 block text-accent" style="opacity:0.4;"></i>
-                <p class="font-medium text-heading">Gráfica de Ingresos y Egresos</p>
-                <p class="text-sm mt-1 text-subtle">Se implementará con Chart.js en la Fase 5</p>
-            </div>
+        <div class="rounded-xl bg-electro-dark/80 p-4">
+            <canvas id="movimientosChart" height="280"></canvas>
         </div>
     </div>
 
@@ -78,7 +79,7 @@
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wider text-subtle">Total Ingresos</p>
-                <p class="text-2xl font-bold text-success">0</p>
+                <p class="text-2xl font-bold text-success">{{ resumen.total_ingresos }}</p>
             </div>
         </div>
 
@@ -89,7 +90,7 @@
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wider text-subtle">Total Egresos</p>
-                <p class="text-2xl font-bold text-danger">0</p>
+                <p class="text-2xl font-bold text-danger">{{ resumen.total_egresos }}</p>
             </div>
         </div>
 
@@ -100,7 +101,7 @@
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wider text-subtle">Día Pico</p>
-                <p class="text-lg font-bold text-warning">—</p>
+                <p class="text-lg font-bold text-warning">{{ resumen.dia_pico }}</p>
             </div>
         </div>
 
@@ -111,10 +112,124 @@
             </div>
             <div>
                 <p class="text-xs uppercase tracking-wider text-subtle">Más Retirado</p>
-                <p class="text-sm font-bold truncate max-w-[120px] text-accent">—</p>
+                <p class="text-sm font-bold truncate max-w-[120px] text-accent">{{ resumen.componente_mas_retirado }}</p>
             </div>
         </div>
     </div>
 
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('movimientosChart');
+        if (!ctx) return;
+
+        const monthSelect = document.getElementById('month-select');
+        const componentSelect = document.getElementById('componente-select');
+        const chartConfig = {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Ingresos',
+                        backgroundColor: 'rgba(56, 189, 96, 0.2)',
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointBackgroundColor: 'rgba(34, 197, 94, 1)',
+                        tension: 0.3,
+                        data: [],
+                    },
+                    {
+                        label: 'Egresos',
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        borderColor: 'rgba(220, 38, 38, 1)',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointBackgroundColor: 'rgba(220, 38, 38, 1)',
+                        tension: 0.3,
+                        data: [],
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(148, 163, 184, 0.15)'
+                        },
+                        ticks: {
+                            color: '#cbd5e1'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(148, 163, 184, 0.15)'
+                        },
+                        ticks: {
+                            color: '#cbd5e1'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#f8fafc'
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleColor: '#f8fafc',
+                        bodyColor: '#e2e8f0',
+                        borderColor: 'rgba(148, 163, 184, 0.25)',
+                        borderWidth: 1,
+                    }
+                }
+            }
+        };
+
+        const chart = new Chart(ctx, chartConfig);
+
+        function obtenerParametros() {
+            const params = new URLSearchParams();
+            if (monthSelect.value) params.set('month', monthSelect.value);
+            if (componentSelect.value) params.set('componente', componentSelect.value);
+            return params.toString();
+        }
+
+        function cargarDatos() {
+            const query = obtenerParametros();
+            const url = `{% url 'metrics:api_datos_grafica' %}` + (query ? `?${query}` : '');
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    chart.data.labels = data.labels;
+                    chart.data.datasets[0].data = data.ingresos;
+                    chart.data.datasets[1].data = data.egresos;
+                    chart.update();
+                })
+                .catch(() => {
+                    chart.data.labels = [];
+                    chart.data.datasets[0].data = [];
+                    chart.data.datasets[1].data = [];
+                    chart.update();
+                });
+        }
+
+        document.getElementById('filtro-metricas').addEventListener('submit', function (event) {
+            event.preventDefault();
+            cargarDatos();
+        });
+
+        cargarDatos();
+    });
+</script>
 {% endblock %}

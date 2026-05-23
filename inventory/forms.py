@@ -82,3 +82,30 @@ class ComponenteForm(forms.ModelForm):
         if qs.exists():
             raise ValidationError('El número de serie ya existe para otro componente.')
         return serial
+
+
+class CategoriaForm(forms.ModelForm):
+    """Form para crear nuevas categorías de inventario."""
+
+    class Meta:
+        model = Categoria
+        fields = ['nombre']
+        widgets = {
+            'nombre': forms.TextInput(
+                attrs={
+                    'class': 'dark-input',
+                    'placeholder': 'Nombre de la categoría'
+                }
+            )
+        }
+        labels = {
+            'nombre': 'Nombre de categoría'
+        }
+
+    def clean_nombre(self):
+        nombre = self.cleaned_data.get('nombre', '').strip()
+        if not nombre:
+            raise ValidationError('Debe ingresar un nombre para la categoría.')
+        if Categoria.objects.filter(nombre__iexact=nombre).exists():
+            raise ValidationError('Ya existe una categoría con ese nombre.')
+        return nombre

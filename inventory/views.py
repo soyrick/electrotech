@@ -6,11 +6,12 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from accounts.decorators import admin_required
-from .models import Componente
-from .forms import ComponenteForm
+from .models import Categoria, Componente
+from .forms import CategoriaForm, ComponenteForm
 
 
 @method_decorator(login_required, name='dispatch')
@@ -22,6 +23,9 @@ class ComponenteListView(ListView):
     paginate_by = 10
     ordering = ['nombre']
 
+    def get_queryset(self):
+        return super().get_queryset().select_related('categoria')
+
 
 @method_decorator(login_required, name='dispatch')
 class ComponenteDetailView(DetailView):
@@ -29,6 +33,9 @@ class ComponenteDetailView(DetailView):
     model = Componente
     template_name = 'inventory/detalle.html'
     context_object_name = 'componente'
+
+    def get_queryset(self):
+        return super().get_queryset().select_related('categoria')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -109,15 +116,39 @@ def eliminar_componente(request, pk):
 
 
 # Gestión de categorías (compatibilidad con inventory/urls.py)
-from django.shortcuts import render
 
-
-@method_decorator(login_required, name='dispatch')
-@method_decorator(admin_required, name='dispatch')
+@login_required
+@admin_required
 def gestionar_categorias(request):
-    """Gestión de categorías (creación simple desde formulario).
+    """Gestión de categorías con creación simple desde formulario."""
+    initial_categories = []
+    if not Categoria.objects.exists():
+        initial_names = [
+            'Procesadores',
+            'Tarjetas madre',
+            'Memorias RAM',
+            'Discos duros',
+            'Tarjetas gráficas',
+        ]
+        initial_categories = [Categoria(nombre=name) for name in initial_names]
+        Categoria.objects.bulk_create(initial_categories)
+        messages.info(request, 'Se han creado categorías iniciales para comenzar a registrar componentes.')
 
-    Placeholder mínimo: renderiza la plantilla de gestión de categorías.
-    La implementación completa puede incluir un Form y operaciones CRUD.
-    """
-    return render(request, 'inventory/categorias.html')
+    if request.method == 'POST':
+        form = CategoriaForm(request.POST)
+        if form.is_valid():
+            categoria = form.save()
+            messages.success(request, f'Categoría "{categoria.nombre}" creada correctamente.')
+            return redirect('inventory:categorias')
+    else:
+        form = CategoriaForm()
+
+    categorias = Categoria.objects.order_by('nombre')
+    return render(
+        request,
+        'inventory/categorias.html',
+        {
+            'form': form,
+            'categorias': categorias,
+        }
+    )

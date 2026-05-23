@@ -1,7 +1,7 @@
 # 🧠 Vitácora de Proyecto — ElectroTech
 
 > **Propósito:** Archivo de contexto entre sesiones. Leer SIEMPRE al iniciar una nueva sesión de trabajo.  
-> **Última actualización:** 21 de mayo de 2026 — Sesión #3 en progreso — Rama `develop`
+> **Última actualización:** 23 de mayo de 2026 — Sesión #3 en progreso — Rama `develop`
 
 ---
 
@@ -69,7 +69,7 @@ Cuando se abra una nueva sesión de trabajo, el agente DEBE:
 | 2 — Modelos Base | Ricardo | ✅ Completada | Categoría, Componente, Movimiento, DetalleMovimiento, migraciones, 13 seeds |
 | 3 — CRUD + Inventario | **Daniel** | 🔲 Pendiente | Vistas y templates del catálogo visual y CRUD |
 | 4 — Ingreso/Egreso | **Daniel** | 🔲 Pendiente | Formularios, lógica de stock, planillas PDF con ReportLab |
-| 5 — Dashboard/Métricas | **Alejandro** | 🔄 Parcial | Templates base listos (dashboard + métricas). Falta: lógica, Chart.js, historial |
+| 5 — Dashboard/Métricas | **Alejandro** | ✅ Completada | Dashboard, API de métricas, gráficos Chart.js e historial implementados |
 | 6 — Pulido final | **Alejandro** | 🔄 Parcial | Sistema de diseño global listo. Falta: responsive, validaciones, README, pruebas |
 
 ---
@@ -102,7 +102,7 @@ Todos los templates nuevos DEBEN usar estas clases. Ver `electrotech.css` para l
 - **PDF:** ReportLab 4.5.1
 - **CSS:** Tailwind CSS (CDN) + `electrotech.css` (sistema de diseño)
 - **Íconos:** Font Awesome 6.5.1 (CDN)
-- **Gráficas:** Chart.js (CDN, pendiente implementar por Alejandro)
+- **Gráficas:** Chart.js (CDN, implementado en métricas de Fase 5)
 - **Entorno virtual:** `.venv/` (raíz del proyecto)
 - **Ramas:** `main` (producción) | `develop` (desarrollo activo)
 
@@ -191,6 +191,7 @@ electrotech/
 - **Dashboard rediseñado** con glassmorphism, íconos de colores, alertas glass.
 - **Métricas** (`graficas.html`) creado con filtros, placeholder de gráfica, 4 tarjetas de resumen.
 - **Login rediseñado** con layout partido 50/50, difuminado azul/gris, chip SVG animado.
+- **PDF mejorado**: comprobantes con encabezado más profesional, tipo de movimiento resaltado y pie de página.
 - **Comentarios `{# #}` → `<!-- -->`** en todos los templates (6 archivos).
 - **`@login_required`** agregado a dashboard y vistas de metrics.
 - **`fases.md` actualizado** con asignación del equipo (Daniel F3+F4, Alejandro F5+F6) y protocolo para IA.

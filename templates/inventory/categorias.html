@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Gestionar categorías{% endblock %}
+
+{% block contenido %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+  <div class="glass-card p-6 space-y-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div>
+        <h2 class="text-2xl font-bold text-heading">Gestión de categorías</h2>
+        <p class="text-subtle">Crea nuevas categorías para organizar los componentes del inventario.</p>
+      </div>
+      <a href="{% url 'inventory:listado' %}" class="btn btn-ghost">Volver al inventario</a>
+    </div>
+
+    {% if messages %}
+      <div class="space-y-2">
+        {% for message in messages %}
+          <div class="alert-glass {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="glass-card p-5">
+        <h3 class="text-lg font-semibold mb-4">Nueva categoría</h3>
+        <form method="post">
+          {% csrf_token %}
+          <div class="space-y-4">
+            <div>
+              <label class="dark-label">Nombre de categoría</label>
+              {{ form.nombre.errors }}
+              {{ form.nombre }}
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center gap-3">
+            <button type="submit" class="btn btn-primary">Guardar categoría</button>
+            <a href="{% url 'inventory:listado' %}" class="btn btn-secondary">Cancelar</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="glass-card p-5">
+        <h3 class="text-lg font-semibold mb-4">Categorías existentes</h3>
+        <div class="space-y-3">
+          {% if categorias %}
+            {% for categoria in categorias %}
+              <div class="p-3 border border-gray-700 rounded-md flex items-center justify-between">
+                <span>{{ categoria.nombre }}</span>
+                <span class="text-subtle text-sm">Creada {{ categoria.fecha_creacion|date:"d/m/Y H:i" }}</span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">Aún no hay categorías registradas.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Planilla Histórica{% endblock %}
+
+{% block contenido %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="glass-card p-6 mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <p class="text-xs uppercase tracking-wider text-subtle">Comprobante</p>
+                <h1 class="text-3xl font-bold text-heading">Planilla {{ movimiento.numero_planilla }}</h1>
+                <p class="text-muted mt-2">Historial oficial del movimiento de inventario.</p>
+            </div>
+            <div class="inline-flex items-center gap-3 rounded-full border border-electro-primary/20 bg-electro-primary/10 px-4 py-3">
+                <span class="text-xs uppercase tracking-wider text-electro-primary">Tipo</span>
+                <span class="text-sm font-semibold text-heading px-3 py-1 rounded-full bg-white shadow-sm">
+                    {{ movimiento.get_tipo_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-3 mb-6">
+        <div class="glass-card-flat p-5">
+            <p class="text-xs uppercase tracking-wider text-subtle">Fecha</p>
+            <p class="text-lg font-semibold text-heading">{{ movimiento.fecha_hora|date:'d/m/Y H:i' }}</p>
+        </div>
+        <div class="glass-card-flat p-5">
+            <p class="text-xs uppercase tracking-wider text-subtle">Registrado por</p>
+            <p class="text-lg font-semibold text-heading">{{ movimiento.usuario.email }}</p>
+        </div>
+        <div class="glass-card-flat p-5">
+            <p class="text-xs uppercase tracking-wider text-subtle">Persona</p>
+            <p class="text-lg font-semibold text-heading">{{ movimiento.nombre_persona }}</p>
+        </div>
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-3 mb-6">
+        <div class="glass-card-flat p-5">
+            <p class="text-xs uppercase tracking-wider text-subtle">Cédula / ID</p>
+            <p class="text-lg font-semibold text-heading">{{ movimiento.cedula|default:'N/D' }}</p>
+        </div>
+        <div class="glass-card-flat p-5">
+            <p class="text-xs uppercase tracking-wider text-subtle">Departamento</p>
+            <p class="text-lg font-semibold text-heading">{{ movimiento.departamento|default:'N/D' }}</p>
+        </div>
+        <div class="glass-card-flat p-5">
+            <p class="text-xs uppercase tracking-wider text-subtle">Cargo</p>
+            <p class="text-lg font-semibold text-heading">{{ movimiento.cargo|default:'N/D' }}</p>
+        </div>
+    </div>
+
+    <div class="glass-card-flat p-6 mb-8 overflow-x-auto">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-heading">Componentes en la planilla</h2>
+            <span class="text-sm uppercase tracking-wider text-subtle">Total: {{ movimiento.detalles.count }}</span>
+        </div>
+        <table class="dark-table min-w-full text-sm">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Serial</th>
+                    <th>Cantidad</th>
+                    <th>Ubicación</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in movimiento.detalles.all %}
+                <tr>
+                    <td>{{ detalle.snapshot_nombre }}</td>
+                    <td>{{ detalle.snapshot_categoria }}</td>
+                    <td>{{ detalle.snapshot_marca }}</td>
+                    <td>{{ detalle.snapshot_modelo }}</td>
+                    <td>{{ detalle.snapshot_serial }}</td>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>{{ detalle.snapshot_ubicacion }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-6 text-muted">No hay componentes registrados en esta planilla.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="glass-card-flat p-6 mb-8">
+        <h3 class="text-lg font-semibold text-heading mb-4">Resumen del movimiento</h3>
+        <div class="grid gap-4 lg:grid-cols-3">
+            <div class="p-4 rounded-2xl border border-electro-primary/10 bg-electro-primary/5">
+                <p class="text-xs uppercase tracking-wider text-subtle">Operación</p>
+                <p class="text-lg font-semibold text-heading">{{ movimiento.numero_planilla }}</p>
+            </div>
+            <div class="p-4 rounded-2xl border border-electro-primary/10 bg-electro-primary/5">
+                <p class="text-xs uppercase tracking-wider text-subtle">Documentación</p>
+                <p class="text-lg font-semibold text-heading">{{ movimiento.get_tipo_display }}</p>
+            </div>
+            <div class="p-4 rounded-2xl border border-electro-primary/10 bg-electro-primary/5">
+                <p class="text-xs uppercase tracking-wider text-subtle">Total de artículos</p>
+                <p class="text-lg font-semibold text-heading">{{ movimiento.detalles|length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+        <button type="button" onclick="imprimirPagina()" class="btn btn-primary">
+            <i class="fa-solid fa-print mr-2"></i> Imprimir planilla
+        </button>
+        {% if movimiento.tipo == 'ING' %}
+            <a href="{% url 'movements:pdf_ingreso' movimiento.pk %}" class="btn btn-secondary">
+                <i class="fa-solid fa-file-pdf mr-2"></i> Descargar PDF
+            </a>
+        {% else %}
+            <a href="{% url 'movements:pdf_egreso' movimiento.pk %}" class="btn btn-secondary">
+                <i class="fa-solid fa-file-pdf mr-2"></i> Descargar PDF
+            </a>
+        {% endif %}
+        <a href="{% url 'metrics:historial' %}" class="btn btn-ghost">Volver al historial</a>
+    </div>
+
+</div>
+{% endblock %}

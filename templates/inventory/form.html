@@ -27,6 +27,9 @@
           <label class="dark-label">Categoría</label>
           {{ form.categoria.errors }}
           {{ form.categoria }}
+          <p class="text-sm text-subtle mt-1">
+            <a href="{% url 'inventory:categorias' %}" class="text-primary underline">Agregar o administrar categorías</a>
+          </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

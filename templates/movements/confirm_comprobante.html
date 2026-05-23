@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block titulo %}Resumen del comprobante{% endblock %}
+
+{% block contenido %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+  <div class="glass-card p-6">
+    <h2 class="text-xl font-bold mb-4">Resumen del comprobante</h2>
+
+    <div class="space-y-3 mb-4">
+      {% if pending %}
+        <p><strong>Tipo:</strong> {% if pending.tipo == 'ING' %}Ingreso{% else %}Egreso{% endif %}</p>
+        <p><strong>Fecha / Hora:</strong> {% if pending.fecha_hora %}{{ pending.fecha_hora }}{% else %}Automática{% endif %}</p>
+        <p><strong>Persona:</strong> {{ pending.nombre_persona }}</p>
+        <p><strong>Cédula / ID:</strong> {{ pending.cedula }}</p>
+        <p><strong>Departamento:</strong> {{ pending.departamento }}</p>
+        <p><strong>Cargo:</strong> {{ pending.cargo }}</p>
+      {% else %}
+        <p><strong>Planilla:</strong> {{ movimiento.numero_planilla }}</p>
+        <p><strong>Tipo:</strong> {{ movimiento.get_tipo_display }}</p>
+        <p><strong>Fecha / Hora:</strong> {{ movimiento.fecha_hora|date:"d/m/Y H:i" }}</p>
+        <p><strong>Usuario:</strong> {{ movimiento.usuario }}</p>
+        <p><strong>Persona:</strong> {{ movimiento.nombre_persona }}</p>
+        <p><strong>Cédula / ID:</strong> {{ movimiento.cedula }}</p>
+        <p><strong>Departamento:</strong> {{ movimiento.departamento }}</p>
+        <p><strong>Cargo:</strong> {{ movimiento.cargo }}</p>
+      {% endif %}
+    </div>
+
+    <div class="mt-6 flex items-center space-x-3">
+      {% if pending %}
+        <form method="post" action="{{ action_url }}">
+          {% csrf_token %}
+          <input type="hidden" name="tipo" value="{{ pending.tipo }}" />
+          <input type="hidden" name="componente" value="{{ pending.componente.pk }}" />
+          <input type="hidden" name="cantidad" value="{{ pending.cantidad }}" />
+          <input type="hidden" name="nombre_persona" value="{{ pending.nombre_persona }}" />
+          <input type="hidden" name="cedula" value="{{ pending.cedula }}" />
+          <input type="hidden" name="cargo" value="{{ pending.cargo }}" />
+          <input type="hidden" name="departamento" value="{{ pending.departamento }}" />
+          {% if pending.fecha_hora %}
+            <input type="hidden" name="fecha_hora" value="{{ pending.fecha_hora|date:'c' }}" />
+          {% endif %}
+          <button type="submit" class="btn btn-primary">Confirmar y generar PDF</button>
+          <a href="javascript:history.back()" class="btn btn-ghost">Cancelar</a>
+        </form>
+      {% else %}
+        <a href="{{ pdf_url }}" class="btn btn-primary" target="_blank">Descargar PDF</a>
+        {% if movimiento.pk %}
+          <a href="{% url 'movements:volver_y_editar' movimiento.pk %}" class="btn btn-ghost">Volver y editar</a>
+        {% endif %}
+        <a href="{% url 'inventory:listado' %}" class="btn btn-secondary">Volver al inventario</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

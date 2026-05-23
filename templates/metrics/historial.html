@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Historial{% endblock %}
+
+{% block contenido %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-heading flex items-center space-x-3">
+            <span class="w-10 h-10 bg-electro-primary rounded-lg flex items-center justify-center shadow-lg shadow-electro-primary/20">
+                <i class="fa-solid fa-clock-rotate-left text-white"></i>
+            </span>
+            <span>Historial de Movimientos</span>
+        </h1>
+        <p class="text-muted mt-2 ml-13">Registro completo de ingresos y egresos con acceso a planillas históricas.</p>
+    </div>
+
+    <div class="glass-card-flat p-5 mb-6">
+        <form method="get" class="grid gap-4 lg:grid-cols-4 items-end">
+            <div>
+                <label class="dark-label">Tipo de movimiento</label>
+                <select name="tipo" class="dark-select">
+                    <option value="">Todos</option>
+                    <option value="ING" {% if tipo == 'ING' %}selected{% endif %}>Ingreso</option>
+                    <option value="EGR" {% if tipo == 'EGR' %}selected{% endif %}>Egreso</option>
+                </select>
+            </div>
+            <div>
+                <label class="dark-label">Componente</label>
+                <select name="componente" class="dark-select">
+                    <option value="">Todos los componentes</option>
+                    {% for componente in componentes %}
+                        <option value="{{ componente.pk }}" {% if componente.pk == componente_id %}selected{% endif %}>
+                            {{ componente.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="dark-label">Buscar</label>
+                <input type="text" name="search" value="{{ search }}" class="dark-input" placeholder="Planilla, persona o correo" />
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                <a href="{% url 'metrics:historial' %}" class="btn btn-secondary">Limpiar</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        <div class="glass-card-flat p-5">
+            <p class="text-xs uppercase tracking-wider text-subtle">Movimientos registrados</p>
+            <p class="text-3xl font-bold text-heading">{{ movimientos.count }}</p>
+        </div>
+        <div class="glass-card-flat p-5">
+            <p class="text-xs uppercase tracking-wider text-subtle">Unidades totales movidas</p>
+            <p class="text-3xl font-bold text-heading">{{ cantidad_total }}</p>
+        </div>
+        <div class="glass-card-flat p-5">
+            <p class="text-xs uppercase tracking-wider text-subtle">Filtros activos</p>
+            <p class="text-sm text-muted">
+                {% if tipo %}Tipo: {{ tipo }}{% else %}Tipo: Todos{% endif %}<br>
+                {% if componente_seleccionado %}Componente: {{ componente_seleccionado.nombre }}{% else %}Componente: Todos{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="glass-card-flat p-5 overflow-x-auto">
+        <table class="dark-table min-w-full">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Planilla</th>
+                    <th>Tipo</th>
+                    <th>Usuario</th>
+                    <th>Persona</th>
+                    <th>Cantidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movimiento in movimientos %}
+                <tr>
+                    <td>{{ movimiento.fecha_hora|date:'d/m/Y H:i' }}</td>
+                    <td>{{ movimiento.numero_planilla }}</td>
+                    <td>
+                        <span class="badge {% if movimiento.tipo == 'ING' %}badge-green{% else %}badge-red{% endif %}">
+                            {{ movimiento.get_tipo_display }}
+                        </span>
+                    </td>
+                    <td>{{ movimiento.usuario.email }}</td>
+                    <td>{{ movimiento.nombre_persona }}</td>
+                    <td>{{ movimiento.total_unidades }}</td>
+                    <td class="space-x-2">
+                        <a href="{% url 'metrics:ver_planilla' movimiento.pk %}" class="btn btn-secondary btn-sm">Ver</a>
+                        {% if movimiento.tipo == 'ING' %}
+                            <a href="{% url 'movements:pdf_ingreso' movimiento.pk %}" class="btn btn-primary btn-sm">PDF</a>
+                        {% else %}
+                            <a href="{% url 'movements:pdf_egreso' movimiento.pk %}" class="btn btn-primary btn-sm">PDF</a>
+                        {% endif %}
+                        {% if user.is_superuser and not movimiento.eliminado %}
+                          <form method="post" action="{% url 'movements:eliminar_movimiento' movimiento.pk %}" style="display:inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                          </form>
+                        {% endif %}
+                        {% if movimiento.eliminado %}
+                          <span class="text-sm text-red-600">Eliminado por {{ movimiento.eliminado_por }} el {{ movimiento.eliminado_en|date:'d/m/Y H:i' }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-6 text-muted">No hay movimientos que coincidan con los filtros.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
